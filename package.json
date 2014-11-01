@@ -14,7 +14,8 @@
   "dependencies": {
     "temp": "^0.8.1",
     "q": "^1.0.1",
-    "debug": "^2.1.0"
+    "debug": "^2.1.0",
+    "mkdirp": "^0.5.0"
   },
   "tags": [
     "tmp",
@@ -37,6 +38,5 @@
   "devDependencies": {
     "chai": "^1.9.2",
     "mocha": "^2.0.1",
-    "mkdirp": "^0.5.0"
   }
 }
