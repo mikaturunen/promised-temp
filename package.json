@@ -1,5 +1,5 @@
 {
-  "name": "promise-temp",
+  "name": "promised-temp",
   "description": "Tool for making temporary files asynchronously that return Promises. Wraps node-temp module with Promises.",
   "author": "Mika Turunen <mika.turunen@ymail.com>",
   "version": "0.1.0",
