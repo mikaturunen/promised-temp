@@ -6,6 +6,7 @@ var temp 	= require("../lib/promised-temp");
 var Q		= require("q");
 var os		= require("os");
 var path    = require("path");
+var fs 		= require("fs");
 
 /**
  * Simplified test suite for promised-temp module to test that it correctly calls the 
@@ -16,6 +17,15 @@ var path    = require("path");
 describe("Promise wrapped temps", function() {
 	"use strict"
 
+	after(function(done) {
+		// after all tests, we remove the created directories and files created
+		temp.track();
+		temp.cleanup().done(function() { done(); });
+	});
+
+	/**
+	 * Tests for .path
+	 */
 	describe("Creates temporary path", function() {
 		it("With specified prefix (string).", function(done) {
 			var path = "foobar213";
@@ -25,9 +35,7 @@ describe("Promise wrapped temps", function() {
 					expect(result.path).to.include(path);
 					done();
 				})
-				.catch(function(error) {
-					console.log("Error: " + error);
-				})
+				.catch(console.log)
 				.done();
 		});
 		
@@ -39,9 +47,7 @@ describe("Promise wrapped temps", function() {
 					expect(result.path).to.include(path);
 					done();
 				})
-				.catch(function(error) {
-					console.log("Error: " + error);
-				})
+				.catch(console.log)
 				.done();
 		});
 
@@ -53,9 +59,7 @@ describe("Promise wrapped temps", function() {
 					expect(result.path).to.include(path);
 					done();
 				})
-				.catch(function(error) {
-					console.log("Error: " + error);
-				})
+				.catch(console.log)
 				.done();
 		});
 
@@ -68,9 +72,7 @@ describe("Promise wrapped temps", function() {
 					expect(result.path).to.include(path1).and.to.include(path2);
 					done();
 				})
-				.catch(function(error) {
-					console.log("Error: " + error);
-				})
+				.catch(console.log)
 				.done();
 		});
 
@@ -87,9 +89,7 @@ describe("Promise wrapped temps", function() {
 						.and.to.include(path3);
 					done();
 				})
-				.catch(function(error) {
-					console.log("Error: " + error);
-				})
+				.catch(console.log)
 				.done();
 		});
 
@@ -101,14 +101,55 @@ describe("Promise wrapped temps", function() {
 					expect(result.path).to.include(path1);
 					done();
 				})
-				.catch(function(error) {
-					console.log("Error: " + error);
-				})
+				.catch(console.log)
 				.done();
 		});
 	});
 
-	describe("Creates temporary directory", function() {
+	/**
+	 * Tests for .mkdir
+	 */
+	describe("Creates directory", function() {
+		it("With specific prefix.", function(done) {
+			// create file, manual cleanup
+			var path1 = "foobar";
+			temp.mkdir(path1).then(function(result) {
+				expect(path1).to.contain(path1);
+				expect(fs.lstatSync(result).isDirectory()).to.equal(true);
+				done();
+			})
+			.catch(console.log)
+			.done();
+		});
+	});
 
+	/**
+	 * Tests for .cleanup
+	 */
+	describe("Performs cleanup", function() {
+		afterEach(function() {
+			temp.track(false);
+		});
+
+		it("Manually, error with no tracking.", function(done) {
+			// create file, manual cleanup
+			var path1 = "foobar";
+			temp.open(path1).then(function(result) {
+				temp.cleanup().catch(function() { done(); }).done();
+			})
+			.catch(console.log)
+			.done();
+		});
+
+		it("Manually, with tracking.", function(done) {
+			// track, create file, manual cleanup
+			var path1 = "foobar";
+			temp.track();
+			temp.open(path1).then(function(result) {
+				temp.cleanup().then(function() { done(); }).catch(console.log).done();
+			})
+			.catch(console.log)
+			.done();
+		});
 	});
 });
